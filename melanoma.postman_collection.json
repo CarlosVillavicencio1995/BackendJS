@@ -1,0 +1,272 @@
+{
+	"info": {
+		"_postman_id": "76a1bd72-d72a-492a-b8d1-eddd3ffcc7ec",
+		"name": "melanoma",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7740080"
+	},
+	"item": [
+		{
+			"name": "iniciar_sesion",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"correo\": \"cavillavicenciot@unl.edu.ec\",\r\n    \"clave\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/iniciar_sesion",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"iniciar_sesion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crea_estudiante",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Jorge\",\r\n    \"apellido\": \"Tandazo\",\r\n    \"cedula\": \"1752973469\",\r\n    \"correo\": \"jorge.tandazo@unl.edu.ec\",\r\n    \"clave\": \"123456\",\r\n    \"ciclo\": \"10\",\r\n    \"paralelo\": \"A\",\r\n    \"carrera\": \"CIS\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/crea_estudiante",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"crea_estudiante"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listar_usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Carlos\",\r\n    \"apellido\": \"Villavicencio\",\r\n    \"rol\": \"ADMINISTRADOR\",\r\n    \"correo\": \"cavillavicenciot@unl.edu.ec\",\r\n    \"clave\": \"123456\",\r\n    \"ciclo\": \"10\",\r\n    \"paralelo\": \"A\",\r\n    \"carrera\": \"CIS\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/listar_usuario",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listar_usuario"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listar_actividad",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Carlos\",\r\n    \"apellido\": \"Villavicencio\",\r\n    \"rol\": \"ADMINISTRADOR\",\r\n    \"correo\": \"cavillavicenciot@unl.edu.ec\",\r\n    \"clave\": \"123456\",\r\n    \"ciclo\": \"10\",\r\n    \"paralelo\": \"A\",\r\n    \"carrera\": \"CIS\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/listar_actividad",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listar_actividad"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crea_resultado",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"observacion\": \"..\",\r\n    \"actividadId\": 1,\r\n    \"estudianteId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/crea_resultado",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"crea_resultado"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listar_resultado",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"estudianteId\": 2,\r\n    \"actividadId\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/listar_resultado",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listar_resultado"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listar_imagen",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/listar_imagen",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listar_imagen"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "predecir_imagen",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "imagen",
+							"type": "file",
+							"src": "/C:/Users/JIMMY/Desktop/melanoma/public/imagenes/no_melanoma/ISIC_0026969.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/predecir_imagen",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"predecir_imagen"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "predecir_ruta",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"ruta\": \"/imagenes/no_melanoma/ISIC_0026969.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/predecir_ruta",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"predecir_ruta"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+  "development": {
+    "username": "uikpdwzbtp1pgnskayqm",
+    "password": "kuTveNjpnprM36ofEa0y",
+    "database": "bg5x1kq4bxrkrvwdovza",
+    "host": "bg5x1kq4bxrkrvwdovza-postgresql.services.clever-cloud.com",
+    "port": "5432",
+    "dialect": "postgres",
+    "operatorsAliases": 0,
+    "timezone": "-05:00"
+  },
+  "production": {
+    "username": "dentaltools",
+    "password": "Dentaltools1.",
+    "database": "dentaltools",
+    "host": "127.0.0.1",
+    "port": "3306",
+    "dialect": "postgres",
+    "operatorsAliases": 0
+  }
+}
