@@ -24,6 +24,16 @@ var init = async function () {
         where: { id: 1 },
         defaults: {
             id: 1,
+            nombre: 'Información',
+            descripcion: "Información",
+            intento: 3,
+            estado: true,
+        }
+    });
+    await Actividad.findOrCreate({
+        where: { id: 2 },
+        defaults: {
+            id: 2,
             nombre: 'Selección de imagen',
             descripcion: "Asertar",
             intento: 3,
@@ -32,9 +42,9 @@ var init = async function () {
     });
 
     await Actividad.findOrCreate({
-        where: { id: 2 },
+        where: { id: 3 },
         defaults: {
-            id: 2,
+            id: 3,
             nombre: 'Cargar imagen',
             descripcion: "Probar modelo",
             intento: 3,

@@ -9,6 +9,7 @@ var Usuario = modelos.usuario;
 var Estudiante = modelos.estudiante;
 var Actividad = modelos.actividad;
 var Resultado = modelos.resultado;
+var Grupo = modelos.grupo;
 var GlobalApp = require('./global_app');
 var UtilMetodo = require('./util_metodo');
 var tipos_datos = ['MELANOMA', 'NO_MELANOMA'];
@@ -126,6 +127,7 @@ class Controlador {
 
     }
 
+
     /** @api {post} /crea_resultado Inciar sesión
     @apiName Inciar sesión
     @apiGroup usuario
@@ -145,6 +147,39 @@ class Controlador {
         } catch (err) {
             UtilMetodo.errorServer(req, res, err);
         }
+    }
+
+    /** @api {post} /crea_resultado Inciar sesión
+     @apiName Inciar sesión
+     @apiGroup usuario
+     @apiDescription Permite iniciar sesion
+     @apiParam {String} correo Requerido correo del usuario
+     @apiParam {String} clave Requerido clave del usuario
+     @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
+     @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
+    async crea_grupo(req, res) {
+        try {
+            let { nombre,codigo,usuarioId } = req.body;
+            var data_grupo = { nombre,codigo,usuarioId };
+            console.log(data_grupo);
+            UtilMetodo.validarCampos(data_grupo);
+            var grupo = await Grupo.create(data_grupo);
+            UtilMetodo.succeesServer(req, res, null, GlobalApp.mensaje_guardar_ok);
+        } catch (err) {
+            UtilMetodo.errorServer(req, res, err);
+        }
+    }
+    async listar_grupo(req, res) {
+        try {
+            let { usuarioId } = req.params;
+            var data_grupo = { usuarioId };
+            UtilMetodo.validarCampos(data_grupo);
+            var grupos = await Grupo.findAll(data_grupo);
+            UtilMetodo.succeesServer(req, res, { grupos }, GlobalApp.mensaje_consulta);
+        } catch (err) {
+            UtilMetodo.errorServer(req, res, err);
+        }
+
     }
 
     /** @api {post} /crea_estudiante Inciar sesión

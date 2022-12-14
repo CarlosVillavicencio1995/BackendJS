@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     }, { freezeTableName: true });
 
     Actividad.associate = function (models) {
-        Actividad.hasMany(models.resultado, { foreignkey: 'id_actividad', as: 'resultado' });
+        Actividad.belongsTo(models.laboratorio, { as: 'laboratorio', constraints: false });
+        Actividad.hasMany(models.resultado);
     };
     return Actividad;
 };

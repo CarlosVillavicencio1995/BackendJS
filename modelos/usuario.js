@@ -10,12 +10,14 @@ module.exports = (sequelize, DataTypes) => {
             unique: true
         },
         clave: { type: DataTypes.STRING },
+        facultad: { type: DataTypes.STRING },
+        carrera: { type: DataTypes.STRING },
         es_administrador: { type: DataTypes.BOOLEAN, defaultValue: false }, //ADMINISTRADOR, ESTUDIANTE
     }, { freezeTableName: true });
 
     Usuario.associate = function (models) {
-        Usuario.hasMany(models.estudiante, { foreignkey: 'id_usuario', as: 'estudiante'});
-
+        Usuario.hasMany(models.grupo)
+        Usuario.hasMany(models.laboratorio)
     };
 
     return Usuario;

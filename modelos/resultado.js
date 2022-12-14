@@ -6,8 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {freezeTableName: true});
 
     Resultado.associate = function (models) {
-        Resultado.belongsTo(models.estudiante, {foreignkey: 'id_estudiante'});
-        Resultado.belongsTo(models.actividad, {foreignkey: 'id_actividad'});
+        Resultado.belongsTo(models.actividad, { as: 'actividad', constraints: false });
     };
     
     return Resultado;
