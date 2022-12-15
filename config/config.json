@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "uikpdwzbtp1pgnskayqm",
-    "password": "kuTveNjpnprM36ofEa0y",
-    "database": "bg5x1kq4bxrkrvwdovza",
-    "host": "bg5x1kq4bxrkrvwdovza-postgresql.services.clever-cloud.com",
+    "username": "umlqabln4kcgpfijn3ho",
+    "password": "Sx2O4eCPtTLQ7iWb4EpY",
+    "database": "bsmp0s5s8kxekmtdth3e",
+    "host": "bsmp0s5s8kxekmtdth3e-postgresql.services.clever-cloud.com",
     "port": "5432",
     "dialect": "postgres",
     "operatorsAliases": 0,

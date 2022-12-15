@@ -4,9 +4,9 @@ var fs = require('fs');
 
 var bCrypt = require('bcrypt-nodejs');
 var formidable = require('formidable');
+var { Op } = require("sequelize");
 var modelos = require('../modelos');
 var Usuario = modelos.usuario;
-var Estudiante = modelos.estudiante;
 var Actividad = modelos.actividad;
 var Resultado = modelos.resultado;
 var Grupo = modelos.grupo;
@@ -49,7 +49,7 @@ class Controlador {
             var correo = req.body.correo;
             var clave = req.body.clave;
             UtilMetodo.validarCampos({ correo, clave });
-            var usuario = await Usuario.findOne({ where: { correo: correo }, include: { model: Estudiante, as: 'estudiante' } });
+            var usuario = await Usuario.findOne({ where: { correo: correo } });
             if (usuario != undefined && bCrypt.compareSync(clave, usuario.clave)) {
                 UtilMetodo.succeesServer(req, res, usuario, GlobalApp.mensaje_usuario_iniciado_sesion);
             } else {
@@ -62,7 +62,7 @@ class Controlador {
     }
 
 
-    /** @api {post} /crea_estudiante Inciar sesión
+    /** @api {post} /crear_usuario Crear usuario
     @apiName Inciar sesión
     @apiGroup usuario
     @apiDescription Permite iniciar sesion
@@ -70,20 +70,15 @@ class Controlador {
     @apiParam {String} clave Requerido clave del usuario
     @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
     @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
-    async crea_estudiante(req, res) {
+    async crear_usuario(req, res) {
         try {
-            let { nombre, apellido, cedula, correo, clave } = req.body; //usuario
-            let { ciclo, paralelo, carrera } = req.body; //estudiante
-            var data_usuario = { nombre, apellido, cedula, correo, clave };
-            var data_estudiante = { ciclo, paralelo, carrera };
-            UtilMetodo.validarCampos(data_usuario);
-            UtilMetodo.validarCampos(data_estudiante);
+            let { nombre, apellido, cedula, correo, clave, facultad, carrera } = req.body; //usuario
+            var data = { nombre, apellido, cedula, correo, clave, facultad, carrera };
+            UtilMetodo.validarCampos(data);
             var usuario = await Usuario.findOne({ where: { correo: correo } });
             if (usuario?.correo != correo) {
-                data_usuario.clave = bCrypt.hashSync(data_usuario.clave, bCrypt.genSaltSync(8), null);
-                var usuario = await Usuario.create(data_usuario);
-                data_estudiante.usuarioId = usuario.id;
-                var estudiante = await Estudiante.create(data_estudiante);
+                data.clave = bCrypt.hashSync(data.clave, bCrypt.genSaltSync(8), null);
+                var usuario = await Usuario.create(data);
                 UtilMetodo.succeesServer(req, res, null, GlobalApp.mensaje_guardar_ok);
             } else {
                 throw { mensaje: GlobalApp.mensaje_usuario_registrado };
@@ -94,7 +89,7 @@ class Controlador {
 
     }
 
-    /** @api {post} /crea_estudiante Inciar sesión
+    /** @api {get} /crea_estudiante Inciar sesión
     @apiName Inciar sesión
     @apiGroup usuario
     @apiDescription Permite iniciar sesion
@@ -102,7 +97,7 @@ class Controlador {
     @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
     async listar_usuario(req, res) {
         try {
-            var usuarios = await Usuario.findAll({ include: { model: Estudiante, as: 'estudiante' } });
+            var usuarios = await Usuario.findAll({});
             UtilMetodo.succeesServer(req, res, { usuarios }, GlobalApp.mensaje_consulta);
         } catch (err) {
             UtilMetodo.errorServer(req, res, err);
@@ -128,28 +123,7 @@ class Controlador {
     }
 
 
-    /** @api {post} /crea_resultado Inciar sesión
-    @apiName Inciar sesión
-    @apiGroup usuario
-    @apiDescription Permite iniciar sesion
-    @apiParam {String} correo Requerido correo del usuario
-    @apiParam {String} clave Requerido clave del usuario
-    @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
-    @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
-    async crea_resultado(req, res) {
-        try {
-            let { observacion, actividadId, estudianteId } = req.body;
-            var data_resultado = { observacion, actividadId, estudianteId };
-            console.log(data_resultado);
-            UtilMetodo.validarCampos(data_resultado);
-            var resultado = await Resultado.create(data_resultado);
-            UtilMetodo.succeesServer(req, res, null, GlobalApp.mensaje_guardar_ok);
-        } catch (err) {
-            UtilMetodo.errorServer(req, res, err);
-        }
-    }
-
-    /** @api {post} /crea_resultado Inciar sesión
+    /** @api {post} /crear_grupo Crear grupo
      @apiName Inciar sesión
      @apiGroup usuario
      @apiDescription Permite iniciar sesion
@@ -157,18 +131,32 @@ class Controlador {
      @apiParam {String} clave Requerido clave del usuario
      @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
      @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
-    async crea_grupo(req, res) {
+    async crear_grupo(req, res) {
         try {
-            let { nombre,codigo,usuarioId } = req.body;
-            var data_grupo = { nombre,codigo,usuarioId };
-            console.log(data_grupo);
+            let { nombre, descripcion, codigo, usuarioId, laboratorioId } = req.body;
+            var data_grupo = { nombre, descripcion, codigo, usuarioId, laboratorioId };
             UtilMetodo.validarCampos(data_grupo);
-            var grupo = await Grupo.create(data_grupo);
+            data_grupo.estado = true;
+            var grupo = await Grupo.findOne({ where: { codigo } });
+            if (grupo?.codigo == codigo) throw { mensaje: "Ya existe un grupo con este código" };
+            var usuario = await Usuario.findOne({ where: { id: usuarioId } });
+            if (!usuario?.es_administrador) throw { mensaje: "El usuario no es administrador" };
+            await Grupo.create(data_grupo);
             UtilMetodo.succeesServer(req, res, null, GlobalApp.mensaje_guardar_ok);
         } catch (err) {
             UtilMetodo.errorServer(req, res, err);
         }
     }
+
+
+    /** @api {post} /listar_grupo Crear grupo
+     @apiName Inciar sesión
+     @apiGroup usuario
+     @apiDescription Permite iniciar sesion
+     @apiParam {String} correo Requerido correo del usuario
+     @apiParam {String} clave Requerido clave del usuario
+     @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
+     @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
     async listar_grupo(req, res) {
         try {
             let { usuarioId } = req.params;
@@ -179,7 +167,137 @@ class Controlador {
         } catch (err) {
             UtilMetodo.errorServer(req, res, err);
         }
+    }
 
+
+    /** @api {post} /matricular_grupo Crear grupo
+    @apiName Inciar sesión
+    @apiGroup usuario
+    @apiDescription Permite iniciar sesion
+    @apiParam {String} correo Requerido correo del usuario
+    @apiParam {String} clave Requerido clave del usuario
+    @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
+    @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
+    async sub_grupo(req, res) {
+        try {
+            let { codigo, usuarioId } = req.body;
+            UtilMetodo.validarCampos({ codigo, usuarioId });
+            var grupo = await Grupo.findOne({ where: { codigo } });
+            if (grupo?.codigo != codigo) throw { mensaje: "No existe un grupo con este código" };
+            if (!grupo?.estado) throw { mensaje: "Este grupo esta inactivo" };
+            var usuario = await Usuario.findOne({ where: { id: usuarioId } });
+            if (!usuario) throw { mensaje: "El usuario no existe" };
+            var grupo_subs = JSON.parse(usuario.grupo_subs);
+            const esta_sub = grupo_subs.find(e => e == grupo.id);
+            if (esta_sub) throw { mensaje: "Ya estas matriculado a este grupo" };
+            grupo_subs.push(grupo.id);
+            await Usuario.update({
+                grupo_subs: JSON.stringify(grupo_subs),
+            }, { where: { id: usuarioId } });
+            UtilMetodo.succeesServer(req, res, null, GlobalApp.mensaje_guardar_ok);
+        } catch (err) {
+            UtilMetodo.errorServer(req, res, err);
+        }
+    }
+
+    /** @api {post} /listar_grupo Crear grupo
+    @apiName Inciar sesión
+    @apiGroup usuario
+    @apiDescription Permite iniciar sesion
+    @apiParam {String} correo Requerido correo del usuario
+    @apiParam {String} clave Requerido clave del usuario
+    @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
+    @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
+    async listar_mis_subs(req, res) {
+        try {
+            let { usuarioId } = req.params;
+            UtilMetodo.validarCampos({ usuarioId });
+            var usuario = await Usuario.findOne({ where: { id: usuarioId } });
+            if (!usuario) throw { mensaje: "El usuario no existe" };
+            var grupo_subs = JSON.parse(usuario.grupo_subs);
+            var grupos = [];
+            for (const id of grupo_subs) {
+                var grupo = await Grupo.findOne({ where: { id, estado: true } });
+                if (grupo) grupos.push(grupo);
+            }
+            UtilMetodo.succeesServer(req, res, { grupos }, GlobalApp.mensaje_consulta);
+        } catch (err) {
+            UtilMetodo.errorServer(req, res, err);
+        }
+    }
+
+    /** @api {post} /matricular_grupo Crear grupo
+   @apiName Inciar sesión
+   @apiGroup usuario
+   @apiDescription Permite iniciar sesion
+   @apiParam {String} correo Requerido correo del usuario
+   @apiParam {String} clave Requerido clave del usuario
+   @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
+   @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
+    async info_grupo(req, res) {
+        try {
+            let { codigo } = req.params;
+            UtilMetodo.validarCampos({ codigo });
+            var grupo = await Grupo.findOne({ where: { codigo } });
+            if (grupo?.codigo != codigo) throw { mensaje: "No existe un grupo con este código" };
+
+            var usuarios = await Usuario.findAll({
+                where: { grupo_subs: { [Op.like]: `%${grupo.id}%` } },
+            });
+            usuarios = JSON.parse(JSON.stringify(usuarios));
+            grupo = JSON.parse(JSON.stringify(grupo));
+
+            grupo.usuarios_subs = usuarios.length;
+            grupo.usuarios = usuarios;
+
+            UtilMetodo.succeesServer(req, res, grupo, GlobalApp.mensaje_guardar_ok);
+        } catch (err) {
+            UtilMetodo.errorServer(req, res, err);
+        }
+    }
+
+    /** @api {post} /editar_grupo Crear grupo
+     @apiName Inciar sesión
+     @apiGroup usuario
+     @apiDescription Permite iniciar sesion
+     @apiParam {String} correo Requerido correo del usuario
+     @apiParam {String} clave Requerido clave del usuario
+     @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
+     @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
+    async editar_grupo(req, res) {
+        try {
+            let { nombre, descripcion, codigo, estado } = req.body;
+            var data_grupo = {};
+            UtilMetodo.validarCampos({ codigo });
+            if (nombre != undefined) data_grupo.nombre = nombre;
+            if (descripcion != undefined) data_grupo.descripcion = descripcion;
+            if (estado != undefined) data_grupo.estado = estado;
+            await Grupo.update(data_grupo, { where: { codigo } });
+            UtilMetodo.succeesServer(req, res, null, GlobalApp.mensaje_actualizar_ok);
+        } catch (err) {
+            UtilMetodo.errorServer(req, res, err);
+        }
+    }
+
+
+    /** @api {post} /crear_resultado Inciar sesión
+    @apiName Inciar sesión
+    @apiGroup usuario
+    @apiDescription Permite iniciar sesion
+    @apiParam {String} correo Requerido correo del usuario
+    @apiParam {String} clave Requerido clave del usuario
+    @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
+    @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
+    async crear_resultado(req, res) {
+        try {
+            let { observacion, actividadId, usuarioId } = req.body;
+            var data_resultado = { observacion, actividadId, usuarioId };
+            UtilMetodo.validarCampos(data_resultado);
+            await Resultado.create(data_resultado);
+            UtilMetodo.succeesServer(req, res, null, GlobalApp.mensaje_guardar_ok);
+        } catch (err) {
+            UtilMetodo.errorServer(req, res, err);
+        }
     }
 
     /** @api {post} /crea_estudiante Inciar sesión
@@ -190,18 +308,9 @@ class Controlador {
     @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
     async listar_resultado(req, res) {
         try {
-            var { actividadId, estudianteId } = req.body;
-            var exclude = ["actividadId", 'estudianteId'];
-            var where_a = {};
-            var where_e = {};
-            if (actividadId != undefined) where_a.id = actividadId;
-            if (estudianteId != undefined) where_e.id = estudianteId;
+            var { actividadId, usuarioId } = req.params;
             var resultados = await Resultado.findAll({
-                include: [
-                    { model: Actividad, where: where_a },
-                    { model: Estudiante, where: where_e, include: { model: Usuario } }
-                ],
-                attributes: { exclude }
+                where: { actividadId, usuarioId },
             });
             UtilMetodo.succeesServer(req, res, { resultados }, GlobalApp.mensaje_consulta);
         } catch (err) {
@@ -217,34 +326,31 @@ class Controlador {
     @apiSuccess {Object} object{"mensaje": "Bienvenido","tipo": "success", "data": {}, "mensaje_alterno": ""}
     @apiError {Object} object{"mensaje": "Ocurrió un error intente más tarde","tipo": "error","mensaje_alterno": ""}*/
     async predecir_imagen(req, res) {
-        try {
-            var form = new formidable.IncomingForm();
-            form.parse(req, async function (err, fields, files) {
-                var imagen = files.imagen;
-                if (imagen == undefined) throw { mensaje: GlobalApp.mensaje_archivo_no };
-                var rutaPatch = `/imagenes/cache/`;
-                UtilMetodo.guardar_imagen(imagen, rutaPatch, async function (response) {
-                    if (response.estado == 1) {
-                        try {
-                            var imagePath = UtilMetodo.obtener_dir() + response.nombre;
-                            var data = await predecir(imagePath);
-                            UtilMetodo.eliminarArchivo(response.nombre, (data) => console.log(data));
-                            UtilMetodo.succeesServer(req, res, data, GlobalApp.mensaje_consulta);
-                        } catch (error) {
-                            UtilMetodo.errorServer(req, res, error);
-                        }
-                    } else {
-                        UtilMetodo.errorServer(req, res, response.mensaje, response.mensaje);
+        var form = new formidable.IncomingForm();
+        form.parse(req, async function (err, fields, files) {
+            var imagen = files.imagen;
+            if (imagen == undefined) throw { mensaje: GlobalApp.mensaje_archivo_no };
+            var rutaPatch = `/imagenes/cache/`;
+            UtilMetodo.guardar_imagen(imagen, rutaPatch, async function (response) {
+                if (response.estado == 1) {
+                    try {
+                        var imagePath = UtilMetodo.obtener_dir() + response.nombre;
+                        var data = await predecir(imagePath);
+                        UtilMetodo.eliminarArchivo(response.nombre, (data) => console.log(data));
+                        UtilMetodo.succeesServer(req, res, data, GlobalApp.mensaje_consulta);
+                    } catch (error) {
+                        UtilMetodo.errorServer(req, res, error);
                     }
-                });
-
+                } else {
+                    UtilMetodo.errorServer(req, res, response.mensaje, response.mensaje);
+                }
             });
-        } catch (err) {
-            UtilMetodo.errorServer(req, res, err);
-        }
+
+        });
+
     }
 
-    /** @api {post} /crea_estudiante Inciar sesión
+    /** @api {post} /predecir_ruta Inciar sesión
     @apiName Inciar sesión
     @apiGroup usuario
     @apiDescription Permite iniciar sesion
@@ -255,7 +361,6 @@ class Controlador {
             var ruta = req.body.ruta;
             UtilMetodo.validarCampos({ ruta });
             var imagePath = UtilMetodo.obtener_dir() + ruta;
-            console.log(imagePath);
             if (fs.existsSync(imagePath)) {
                 var data = await predecir(imagePath);
                 UtilMetodo.succeesServer(req, res, data, GlobalApp.mensaje_consulta);

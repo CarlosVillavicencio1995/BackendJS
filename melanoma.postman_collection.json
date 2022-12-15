@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "76a1bd72-d72a-492a-b8d1-eddd3ffcc7ec",
+		"_postman_id": "7b3fa1fb-2305-4f40-9be5-4f421714dc79",
 		"name": "melanoma",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "7740080"
@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"correo\": \"cavillavicenciot@unl.edu.ec\",\r\n    \"clave\": \"123456\"\r\n}",
+					"raw": "{\r\n    \"correo\": \"bryan.requenes@unl.edu.ec\",\r\n    \"clave\": \"123456789\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -36,13 +36,13 @@
 			"response": []
 		},
 		{
-			"name": "crea_estudiante",
+			"name": "crear_usuario",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nombre\": \"Jorge\",\r\n    \"apellido\": \"Tandazo\",\r\n    \"cedula\": \"1752973469\",\r\n    \"correo\": \"jorge.tandazo@unl.edu.ec\",\r\n    \"clave\": \"123456\",\r\n    \"ciclo\": \"10\",\r\n    \"paralelo\": \"A\",\r\n    \"carrera\": \"CIS\"\r\n}",
+					"raw": "{\r\n    \"nombre\": \"Jorge\",\r\n    \"apellido\": \"Tandazo\",\r\n    \"cedula\": \"1752973469\",\r\n    \"correo\": \"jorge.tandazo@unl.edu.ec\",\r\n    \"clave\": \"123456\",\r\n    \"facultad\": \"FEIRNNR\",\r\n    \"carrera\": \"CIS\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -50,7 +50,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/crea_estudiante",
+					"raw": "http://localhost:3000/api/crear_usuario",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -58,7 +58,7 @@
 					"port": "3000",
 					"path": [
 						"api",
-						"crea_estudiante"
+						"crear_usuario"
 					]
 				}
 			},
@@ -66,12 +66,15 @@
 		},
 		{
 			"name": "listar_usuario",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nombre\": \"Carlos\",\r\n    \"apellido\": \"Villavicencio\",\r\n    \"rol\": \"ADMINISTRADOR\",\r\n    \"correo\": \"cavillavicenciot@unl.edu.ec\",\r\n    \"clave\": \"123456\",\r\n    \"ciclo\": \"10\",\r\n    \"paralelo\": \"A\",\r\n    \"carrera\": \"CIS\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -95,8 +98,11 @@
 		},
 		{
 			"name": "listar_actividad",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
@@ -123,13 +129,16 @@
 			"response": []
 		},
 		{
-			"name": "crea_resultado",
+			"name": "listar_grupo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"observacion\": \"..\",\r\n    \"actividadId\": 1,\r\n    \"estudianteId\": 1\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -137,7 +146,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/crea_resultado",
+					"raw": "http://localhost:3000/api/listar_grupo/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -145,7 +154,157 @@
 					"port": "3000",
 					"path": [
 						"api",
-						"crea_resultado"
+						"listar_grupo",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crear_resultado",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"observacion\": \"..\",\r\n    \"actividadId\": 1,\r\n    \"usuarioId\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/crear_resultado",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"crear_resultado"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crear_grupo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Grupo 2\",\r\n    \"descripcion\": \"Desccripcion\",\r\n    \"codigo\": \"grupo2\",\r\n    \"usuarioId\": 1,\r\n    \"laboratorioId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/crear_grupo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"crear_grupo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sub_grupo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"codigo\": \"grupo1\",\r\n    \"usuarioId\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/sub_grupo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"sub_grupo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "editar_grupo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"codigo\": \"grupo1\",\r\n    \"estado\": false,\r\n    \"descripcion\": \"Descripcion grupo 1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/editar_grupo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"editar_grupo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "info_grupo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/info_grupo/grupo1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"info_grupo",
+						"grupo1"
 					]
 				}
 			},
@@ -153,12 +312,15 @@
 		},
 		{
 			"name": "listar_resultado",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"estudianteId\": 2,\r\n    \"actividadId\": 2\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -166,7 +328,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/listar_resultado",
+					"raw": "http://localhost:3000/api/listar_resultado/1/2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -174,7 +336,42 @@
 					"port": "3000",
 					"path": [
 						"api",
-						"listar_resultado"
+						"listar_resultado",
+						"1",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listar_mis_subs",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/listar_mis_subs/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listar_mis_subs",
+						"2"
 					]
 				}
 			},
@@ -182,8 +379,11 @@
 		},
 		{
 			"name": "listar_imagen",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
@@ -220,7 +420,7 @@
 						{
 							"key": "imagen",
 							"type": "file",
-							"src": "/C:/Users/JIMMY/Desktop/melanoma/public/imagenes/no_melanoma/ISIC_0026969.jpg"
+							"src": "/C:/Users/JIMMY/Pictures/firma.png"
 						}
 					]
 				},

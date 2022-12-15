@@ -13,11 +13,13 @@ module.exports = (sequelize, DataTypes) => {
         facultad: { type: DataTypes.STRING },
         carrera: { type: DataTypes.STRING },
         es_administrador: { type: DataTypes.BOOLEAN, defaultValue: false }, //ADMINISTRADOR, ESTUDIANTE
+        grupo_subs: { type: DataTypes.TEXT, defaultValue: "[]" },
     }, { freezeTableName: true });
 
     Usuario.associate = function (models) {
-        Usuario.hasMany(models.grupo)
-        Usuario.hasMany(models.laboratorio)
+        Usuario.hasMany(models.grupo);
+        // Usuario.hasMany(models.laboratorio);
+        Usuario.hasMany(models.resultado);
     };
 
     return Usuario;
